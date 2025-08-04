@@ -28,6 +28,27 @@ test_data = {
                 "options": ["A) 6", "B) 8", "C) 10", "D) 12", "E) 14"],
                 "correct_answer": "B",
                 "explanation": "3x - 7 = 17 → 3x = 24 → x = 8 (Option B)."
+            },
+            {
+                "id": "quant-q4",
+                "text": "4. What is the area of a circle with circumference 10π?",
+                "options": ["A) 5π", "B) 10π", "C) 20π", "D) 25π", "E) 100π"],
+                "correct_answer": "D",
+                "explanation": "Circumference = 2πr = 10π → r = 5. Area = πr² = 25π."
+            },
+            {
+                "id": "quant-q5",
+                "text": "5. If 2^x = 32, what is the value of x?",
+                "options": ["A) 2", "B) 3", "C) 4", "D) 5", "E) 6"],
+                "correct_answer": "D",
+                "explanation": "32 = 2^5, so x = 5."
+            },
+            {
+                "id": "quant-q6",
+                "text": "6. The average of five numbers is 20. If one number is removed, the average becomes 18. What was the number removed?",
+                "options": ["A) 22", "B) 24", "C) 26", "D) 28", "E) 30"],
+                "correct_answer": "D",
+                "explanation": "Total of 5 numbers = 100. Total of 4 numbers = 72. Removed number = 100 - 72 = 28."
             }
         ]
     },
@@ -49,6 +70,34 @@ test_data = {
                 "options": ["A) free trade leads to greater economic growth", "B) the benefits are not equally distributed", "C) tariffs should be eliminated completely", "D) international cooperation is essential", "E) protectionist policies are outdated"],
                 "correct_answer": "B",
                 "explanation": "Only B presents a proper contrast to the opening statement."
+            },
+            {
+                "id": "verbal-q3",
+                "text": "3. Identify the grammatically correct sentence:",
+                "options": ["A) Neither the manager nor the employees was aware of the policy change.", "B) Each of the students have completed their assignments.", "C) The data suggests that the new treatment is effective.", "D) The committee are divided in their opinions.", "E) A number of people was absent yesterday."],
+                "correct_answer": "C",
+                "explanation": "Option C is correct. 'Data' can be singular, and the verb agrees. Other options have subject-verb agreement errors."
+            },
+            {
+                "id": "verbal-q4",
+                "text": "4. The author's argument would be most weakened if which of the following were true?",
+                "options": ["A) The sample size was larger than initially reported", "B) The control group showed similar results", "C) The experiment was conducted by independent researchers", "D) The results were consistent across different demographics", "E) The measurement tools were found to be unreliable"],
+                "correct_answer": "E",
+                "explanation": "If measurement tools were unreliable, the entire study's validity would be compromised."
+            },
+            {
+                "id": "verbal-q5",
+                "text": "5. Choose the word most opposite in meaning to 'EPHEMERAL':",
+                "options": ["A) Temporary", "B) Fleeting", "C) Permanent", "D) Transient", "E) Momentary"],
+                "correct_answer": "C",
+                "explanation": "Ephemeral means lasting for a short time, so 'permanent' is its opposite."
+            },
+            {
+                "id": "verbal-q6",
+                "text": "6. The passage suggests that the primary cause of the economic downturn was:",
+                "options": ["A) Decreased consumer spending", "B) Government policy changes", "C) Fluctuations in the stock market", "D) Overregulation of industries", "E) A combination of external factors"],
+                "correct_answer": "A",
+                "explanation": "The passage emphasizes reduced consumer confidence and spending as the main factor."
             }
         ]
     },
@@ -70,6 +119,34 @@ test_data = {
                 "options": ["A) 2018", "B) 2019", "C) 2020", "D) 2021", "E) 2022"],
                 "correct_answer": "B",
                 "explanation": "Profit margin = (Revenue - Expenses) / Revenue. Calculate and compare."
+            },
+            {
+                "id": "ir-q3",
+                "text": "3. If the trend shown in the chart continues, what will be the approximate value in 2023?",
+                "options": ["A) 120", "B) 135", "C) 150", "D) 165", "E) 180"],
+                "correct_answer": "D",
+                "explanation": "Extend the trend line to estimate the 2023 value."
+            },
+            {
+                "id": "ir-q4",
+                "text": "4. Based on the two sources provided, which conclusion is best supported?",
+                "options": ["A) Sales are declining in all regions", "B) The new marketing strategy is effective", "C) Customer satisfaction has decreased", "D) Production costs are rising", "E) Employee turnover is increasing"],
+                "correct_answer": "B",
+                "explanation": "Both sources provide evidence supporting the effectiveness of the new strategy."
+            },
+            {
+                "id": "ir-q5",
+                "text": "5. Which region showed the greatest variance between projected and actual sales?",
+                "options": ["A) North", "B) South", "C) East", "D) West", "E) Central"],
+                "correct_answer": "A",
+                "explanation": "Calculate the differences for each region and compare."
+            },
+            {
+                "id": "ir-q6",
+                "text": "6. Based on the table, if the growth rate remains constant, what will be the value in Year 5?",
+                "options": ["A) 1,200", "B) 1,440", "C) 1,728", "D) 2,074", "E) 2,488"],
+                "correct_answer": "D",
+                "explanation": "Calculate the growth rate and apply it to project Year 5's value."
             }
         ]
     }
@@ -124,24 +201,36 @@ if current_q >= len(questions):
 else:
     question = questions[current_q]
     st.subheader(question["text"])
-    selected = st.radio("Choose one:", question["options"], key=question["id"])
+    
+    # Use a form to prevent the page from reloading when moving to next question
+    with st.form(key='question_form'):
+        selected = st.radio("Choose one:", question["options"], key=question["id"])
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            submit_button = st.form_submit_button("Submit Answer")
+        with col2:
+            next_button = st.form_submit_button("Next Question")
+        
+        if submit_button:
+            correct_letter = question["correct_answer"]
+            user_letter = selected.split(")")[0]
 
-    if st.button("Submit Answer"):
-        correct_letter = question["correct_answer"]
-        user_letter = selected.split(")")[0]
+            is_correct = user_letter == correct_letter
+            if is_correct:
+                st.success(f"✅ Correct! {question['explanation']}")
+            else:
+                correct_option = [opt for opt in question["options"] if opt.startswith(correct_letter)][0]
+                st.error(f"❌ Incorrect. Correct answer: {correct_option}\n\n{question['explanation']}")
 
-        is_correct = user_letter == correct_letter
-        if is_correct:
-            st.success(f"✅ Correct! {question['explanation']}")
-        else:
-            correct_option = [opt for opt in question["options"] if opt.startswith(correct_letter)][0]
-            st.error(f"❌ Incorrect. Correct answer: {correct_option}\n\n{question['explanation']}")
+            st.session_state.answers[question["id"]] = {
+                "selected": user_letter,
+                "correct": is_correct
+            }
+        
+        if next_button:
+            st.session_state.current_q += 1
+            st.experimental_rerun()
 
-        st.session_state.answers[question["id"]] = {
-            "selected": user_letter,
-            "correct": is_correct
-        }
-        st.session_state.current_q += 1
-
-    progress = int(((current_q + 1) / len(questions)) * 100)
+    progress = int(((current_q + 1) / len(questions)) * 100
     st.progress(progress)
